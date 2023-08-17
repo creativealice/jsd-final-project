@@ -17,9 +17,10 @@ const homeButton = document.querySelector('#home');
 const individualCardDetail = document.querySelector('#individualCardDetail');
 const myDeck = document.querySelector('#myDeck');
 const myDeckList = document.querySelector('#myDeckList');
+const existingSpan = document.querySelector('#cardCount');
 
-
-const favouritesArray = []; //empty array to store favourited cards
+//empty array to store favourited cards
+const favouritesArray = []; 
 
 //global variable for pagination
 let currentPage = 1; 
@@ -36,8 +37,6 @@ function clearPreviousSearches(){
 }
 
 //show 100 cards by default, total count from headers: 81967 i.e. about 820 pages
-
-
 function loadAllCards( currentPage ){
 
 clearPreviousSearches()
@@ -45,7 +44,7 @@ clearPreviousSearches()
      axios.get( MAGIC_BASE_URL, {
         params: {
             page: currentPage,
-            pageSize: 10, //TODO: change to 100
+            pageSize: 25, 
         }
     })
 
@@ -110,6 +109,7 @@ const loadSearchResults = ( searchText ) =>{
             const newImageTag = document.createElement('img');
             newImageTag.src= `${card.imageUrl}`
             newImageTag.alt = `${card.name}`
+            newImageTag.classList.add('cardTile');
 
             //get the id and add as an attribute to each image to target later for card details page
             newImageTag.dataset.id = card.id;
@@ -133,6 +133,7 @@ const loadSearchResults = ( searchText ) =>{
 const cardDetails = (id) => {
 
     clearPreviousSearches()
+    nextButton.style.display= "none"; //hide next button
 
     axios.get( `${MAGIC_BASE_URL}/${id}` )
 
@@ -150,9 +151,10 @@ const cardDetails = (id) => {
         newDivTag.innerHTML = `
         <h2>${res.data.card.name}</h2>
         <span class="material-symbols-outlined" id="favourite">
-        favorite </span>
-        <p>Type: ${res.data.card.type}</p>
-        <p>Rarity: ${res.data.card.rarity}</p>
+        heart_plus
+        </span>
+        <p><strong>Type:</strong> ${res.data.card.type}</p>
+        <p><strong>Rarity:</strong> ${res.data.card.rarity}</p>
         <p>${res.data.card.text}</p>
         `
 
@@ -163,12 +165,31 @@ const cardDetails = (id) => {
         
         favouriteButton.addEventListener( 'click', ev => {
 
-            console.log('favouriteButton clicked');
+            // console.log('favouriteButton clicked');
+            // console.log(favouriteButton.innerText);
 
-        // push id into array
+
+            //if already favourited, change to minus icon, if clicked again change to a plus - mimicking adding and removing to favourited cards "My deck"
+
+            if (favouriteButton.innerText === 'heart_plus'){
+                favouriteButton.innerText = 'heart_minus'
+            } else if( favouriteButton.innerText === 'heart_minus' ){
+                favouriteButton.innerText = 'heart_plus'
+            }
+
+            // push object into array
             favouritesArray.push( res.data.card );
-            console.log( 'favourites array push', res.data.card );
+            // console.log( 'favourites array push', res.data.card );
             console.log( favouritesArray );
+
+            //update favourited card number on My deck button 
+
+            existingSpan.replaceChildren();// clear any previous numbers
+
+            existingSpan.innerHTML = `
+            (${favouritesArray.length})
+            `
+
         })
 
     })
@@ -185,7 +206,7 @@ searchFormNode.addEventListener(`submit`, ev =>{
     
     ev.preventDefault(); //stop the form submit as not sending data to a server
 
-      console.log('clicked');
+    //   console.log('clicked');
     //   console.log(userSearchInput.value);
 
       loadSearchResults( userSearchInput.value );
@@ -193,7 +214,7 @@ searchFormNode.addEventListener(`submit`, ev =>{
 });
 
 searchResultsContainer.addEventListener( 'click', ev => {
-    console.log('card clicked', ev.target.dataset.id);
+    // console.log('card clicked', ev.target.dataset.id);
 
     
     const clickedCard = ev.target.dataset.id
@@ -242,22 +263,23 @@ backButton.addEventListener('click', ev =>{
 homeButton.addEventListener('click', ev=>{
     currentPage = 1;
     loadAllCards( currentPage );
+    nextButton.style.display="block"; //ensure next button is displaying
 });
 
 //On click of 'My Deck' link take user to list of favourites or display the 'No cards yet' message
 myDeck.addEventListener('click', ev=>{
 
-    clearPreviousSearches()
+    clearPreviousSearches();
 
-    newH2Tag = document.createElement('h2')
-    newH2Tag.innerHTML = 'My deck'
+    newH2Tag = document.createElement('h2');
+    newH2Tag.innerHTML = 'My deck';
 
     myDeckList.appendChild(newH2Tag);
 
-    //TODO: if statement to check if it's empty or has data
     if( favouritesArray.length === 0 ){
         newDivTag = document.createElement('div');
         newDivTag.innerHTML = `
+
         There are no cards in your list yet.
 
         `
@@ -274,6 +296,7 @@ myDeck.addEventListener('click', ev=>{
         newImageTag.src= `${card.imageUrl}`;
         newImageTag.alt = `${card.name}`;
         newImageTag.classList.add('cardTile');
+        newImageTag.dataset.id = card.id;
 
         myDeckList.appendChild(newImageTag);
 
@@ -282,10 +305,20 @@ myDeck.addEventListener('click', ev=>{
 
 });
 
+myDeckList.addEventListener('click', ev =>{
+    // console.log(ev.target.dataset.id);
+    cardDetails(ev.target.dataset.id);
+})
 
-//test
-//load all cards on first visit - need to sort out async/ loading
-//click onto card for more details
-//favourite to add to new array
-//click on faves displays all stored items
-//capitals vs lower case search
+
+//TEST
+
+//load all cards on first visit
+//paginate to browse more, on first page the back button disappears
+//click onto card for more details (from search results and my deck)
+//my deck has different text when empty
+//favourite card to add to My deck, favourite icon changes once clicked (until refreshed - TODO)
+//click on My deck to display all favourited cards
+//go home to return to first page
+//search for card names
+    //capitals vs lower case search
