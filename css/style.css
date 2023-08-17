@@ -1,0 +1,91 @@
+html {
+    color: #BACFD2;
+    background-color: #1C4449;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+}
+
+h1, h2 {
+    
+    font-family: 'Cinzel Decorative', cursive;
+}
+
+.button {
+    background-color: #9F953E;
+    color: #312D0A;
+    padding: 0.5rem;
+    text-decoration: none;
+
+}
+
+img {
+    /* margin: 0.3rem; */
+    padding: 0.3rem;
+}
+
+#searchForm {
+        padding-top: 0.5rem;
+}
+
+#searchText{
+    height: 30px;
+    background-color: #BACFD2;
+}
+
+#searchContainer {
+    /* margin: 0.2rem; */
+    /* padding: 0.2rem; */
+    /* border: 2px solid black; */
+    cursor: pointer;
+    display: inline-block;
+    text-align: left;
+}
+
+#navBar {
+    margin-top: 0.3rem;
+    /* margin-right: 0.3rem; */
+    padding-bottom: 1rem;
+    /* border: 2px solid black; */
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    
+}
+
+#pagination {
+    list-style: none;
+    margin-top: 1rem;
+    padding: 0.2rem;
+    /* border: 2px solid black; */
+
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.cardTile {
+        padding: 0.3rem;
+        /* margin: 0.5rem; */
+        cursor: pointer;
+}
+
+#individualCardDetail{
+    display: flex;
+}
+
+#cardDetailsContainer{
+    margin: 0.3rem;
+    padding: 0.3rem;
+
+}
+
+#backButton {
+    display: none;
+}
+
+#favourite {
+    cursor: pointer;
+}
