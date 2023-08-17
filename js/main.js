@@ -20,16 +20,16 @@ const myDeckList = document.querySelector('#myDeckList');
 const existingSpan = document.querySelector('#cardCount');
 
 //empty array to store favourited cards
-const favouritesArray = []; 
+const favouritesArray = [];
 
 //global variable for pagination
-let currentPage = 1; 
+let currentPage = 1;
 
 //Page starts with 100 cards loaded
 loadAllCards();
 
 //Clear any previous searches
-function clearPreviousSearches(){
+function clearPreviousSearches() {
 
     myDeckList.replaceChildren();
     individualCardDetail.replaceChildren(); //clear previous searches
@@ -37,55 +37,55 @@ function clearPreviousSearches(){
 }
 
 //show 100 cards by default, total count from headers: 81967 i.e. about 820 pages
-function loadAllCards( currentPage ){
+function loadAllCards(currentPage) {
 
-clearPreviousSearches()
+    clearPreviousSearches()
 
-     axios.get( MAGIC_BASE_URL, {
+    axios.get(MAGIC_BASE_URL, {
         params: {
             page: currentPage,
-            pageSize: 25, 
+            pageSize: 25,
         }
     })
 
-    .then( res => {
-        // console.log( 'loadAllCards', res.data );
+        .then(res => {
+            // console.log( 'loadAllCards', res.data );
 
-        const cards = res.data.cards;
-        // console.log( cards );
+            const cards = res.data.cards;
+            // console.log( cards );
 
-        //TODO: make the total displayed 10 ignoring null ones
+            //TODO: make the total displayed 10 ignoring null ones
 
-        //loop through array of card objects and and render 
-        cards.forEach( card => {
-            if (card.imageUrl !== null && card.imageUrl !== undefined){
-            // console.log( card.name );
-            // console.log( card.imageUrl );
+            //loop through array of card objects and and render 
+            cards.forEach(card => {
+                if (card.imageUrl !== null && card.imageUrl !== undefined) {
+                    // console.log( card.name );
+                    // console.log( card.imageUrl );
 
-            const newImageTag = document.createElement('img');
+                    const newImageTag = document.createElement('img');
 
-            newImageTag.src= `${card.imageUrl}`;
-            newImageTag.alt = `${card.name}`;
-            newImageTag.dataset.id = card.id;
-            newImageTag.classList.add('cardTile');
+                    newImageTag.src = `${card.imageUrl}`;
+                    newImageTag.alt = `${card.name}`;
+                    newImageTag.dataset.id = card.id;
+                    newImageTag.classList.add('cardTile');
 
-            //Add seleted properties to searchResultsContainer
-            searchResultsContainer.appendChild(newImageTag);
+                    //Add seleted properties to searchResultsContainer
+                    searchResultsContainer.appendChild(newImageTag);
 
-        }
+                }
+            })
+
         })
-    
-    })
 
-    .catch( err => {
-        console.warn('Error loading search results:', err );
-    });
+        .catch(err => {
+            console.warn('Error loading search results:', err);
+        });
 }
 // };
 
 
 //load search results
-const loadSearchResults = ( searchText ) =>{
+const loadSearchResults = (searchText) => {
 
     clearPreviousSearches()
 
@@ -95,37 +95,37 @@ const loadSearchResults = ( searchText ) =>{
         }
     })
 
-    //display cards that include the searchText in the name, this seems to be case insensitive
-    
-    .then(res => {
+        //display cards that include the searchText in the name, this seems to be case insensitive
 
-        const cards = res.data.cards;
+        .then(res => {
 
-        // console.log( cards );
+            const cards = res.data.cards;
 
-        cards.forEach( card => {
-            if (card.imageUrl !== null && card.imageUrl !== undefined){
+            // console.log( cards );
 
-            const newImageTag = document.createElement('img');
-            newImageTag.src= `${card.imageUrl}`
-            newImageTag.alt = `${card.name}`
-            newImageTag.classList.add('cardTile');
+            cards.forEach(card => {
+                if (card.imageUrl !== null && card.imageUrl !== undefined) {
 
-            //get the id and add as an attribute to each image to target later for card details page
-            newImageTag.dataset.id = card.id;
-            // console.log(card.id);
+                    const newImageTag = document.createElement('img');
+                    newImageTag.src = `${card.imageUrl}`
+                    newImageTag.alt = `${card.name}`
+                    newImageTag.classList.add('cardTile');
 
-            //add the defined image details above
-            searchResultsContainer.appendChild(newImageTag);
+                    //get the id and add as an attribute to each image to target later for card details page
+                    newImageTag.dataset.id = card.id;
+                    // console.log(card.id);
 
-            }
-        } )
+                    //add the defined image details above
+                    searchResultsContainer.appendChild(newImageTag);
 
-    })
+                }
+            })
 
-    .catch( err =>{
-        console.warn( 'Error loading search results:', err );
-    });
+        })
+
+        .catch(err => {
+            console.warn('Error loading search results:', err);
+        });
 
 }
 
@@ -133,22 +133,22 @@ const loadSearchResults = ( searchText ) =>{
 const cardDetails = (id) => {
 
     clearPreviousSearches()
-    nextButton.style.display= "none"; //hide next button
+    nextButton.style.display = "none"; //hide next button
 
-    axios.get( `${MAGIC_BASE_URL}/${id}` )
+    axios.get(`${MAGIC_BASE_URL}/${id}`)
 
-    .then( res=> {
+        .then(res => {
 
-        // console.log('card details', res.data.card.imageUrl);
-        const newImageTag = document.createElement('img');
-        newImageTag.src= `${res.data.card.imageUrl}`
-        
-        const newDivTag = document.createElement('div');
+            // console.log('card details', res.data.card.imageUrl);
+            const newImageTag = document.createElement('img');
+            newImageTag.src = `${res.data.card.imageUrl}`
 
-        // newDivTag.dataset.id = 'individualCard'
+            const newDivTag = document.createElement('div');
 
-        newDivTag.dataset.id ='cardDetailsContainer'
-        newDivTag.innerHTML = `
+            // newDivTag.dataset.id = 'individualCard'
+
+            newDivTag.dataset.id = 'cardDetailsContainer'
+            newDivTag.innerHTML = `
         <h2>${res.data.card.name}</h2>
         <span class="material-symbols-outlined" id="favourite">
         heart_plus
@@ -158,72 +158,72 @@ const cardDetails = (id) => {
         <p>${res.data.card.text}</p>
         `
 
-        individualCardDetail.appendChild(newImageTag);
-        individualCardDetail.appendChild(newDivTag);
+            individualCardDetail.appendChild(newImageTag);
+            individualCardDetail.appendChild(newDivTag);
 
-        const favouriteButton = document.querySelector('#favourite');
-        
-        favouriteButton.addEventListener( 'click', ev => {
+            const favouriteButton = document.querySelector('#favourite');
 
-            // console.log('favouriteButton clicked');
-            // console.log(favouriteButton.innerText);
+            favouriteButton.addEventListener('click', ev => {
+
+                // console.log('favouriteButton clicked');
+                // console.log(favouriteButton.innerText);
 
 
-            //if already favourited, change to minus icon, if clicked again change to a plus - mimicking adding and removing to favourited cards "My deck"
+                //if already favourited, change to minus icon, if clicked again change to a plus - mimicking adding and removing to favourited cards "My deck"
 
-            if (favouriteButton.innerText === 'heart_plus'){
-                favouriteButton.innerText = 'heart_minus'
-            } else if( favouriteButton.innerText === 'heart_minus' ){
-                favouriteButton.innerText = 'heart_plus'
-            }
+                if (favouriteButton.innerText === 'heart_plus') {
+                    favouriteButton.innerText = 'heart_minus'
+                } else if (favouriteButton.innerText === 'heart_minus') {
+                    favouriteButton.innerText = 'heart_plus'
+                }
 
-            // push object into array
-            favouritesArray.push( res.data.card );
-            // console.log( 'favourites array push', res.data.card );
-            console.log( favouritesArray );
+                // push object into array
+                favouritesArray.push(res.data.card);
+                // console.log( 'favourites array push', res.data.card );
+                console.log(favouritesArray);
 
-            //update favourited card number on My deck button 
+                //update favourited card number on My deck button 
 
-            existingSpan.replaceChildren();// clear any previous numbers
+                existingSpan.replaceChildren();// clear any previous numbers
 
-            existingSpan.innerHTML = `
+                existingSpan.innerHTML = `
             (${favouritesArray.length})
             `
 
+            })
+
         })
 
-    })
-
-    .catch( err =>{
-        console.warn( 'Error loading search results:', err );
-    });
+        .catch(err => {
+            console.warn('Error loading search results:', err);
+        });
 
 
 }
 
 //event handler to 
-searchFormNode.addEventListener(`submit`, ev =>{
-    
+searchFormNode.addEventListener(`submit`, ev => {
+
     ev.preventDefault(); //stop the form submit as not sending data to a server
 
     //   console.log('clicked');
     //   console.log(userSearchInput.value);
 
-      loadSearchResults( userSearchInput.value );
+    loadSearchResults(userSearchInput.value);
 
 });
 
-searchResultsContainer.addEventListener( 'click', ev => {
+searchResultsContainer.addEventListener('click', ev => {
     // console.log('card clicked', ev.target.dataset.id);
 
-    
+
     const clickedCard = ev.target.dataset.id
     // console.log(clickedCard);
     cardDetails(clickedCard);
 
 })
 
-nextButton.addEventListener('click', ev =>{
+nextButton.addEventListener('click', ev => {
 
     //display back button
     backButton.style.display = "block";
@@ -231,12 +231,12 @@ nextButton.addEventListener('click', ev =>{
     clearPreviousSearches()
 
     //currentPage + 1
-    if (currentPage <=820 ){
+    if (currentPage <= 820) {
 
-        loadAllCards( currentPage += 1 );
+        loadAllCards(currentPage += 1);
 
     } else {
-        
+
         const newPTag = document.createElement('p')
         newPTag.innerHTML = `
         You've reached the end of the cards list, please go back or return Home.
@@ -245,7 +245,7 @@ nextButton.addEventListener('click', ev =>{
     }
 })
 
-backButton.addEventListener('click', ev =>{
+backButton.addEventListener('click', ev => {
 
     //display back button
 
@@ -260,14 +260,14 @@ backButton.addEventListener('click', ev =>{
     loadAllCards(currentPage);
 })
 
-homeButton.addEventListener('click', ev=>{
+homeButton.addEventListener('click', ev => {
     currentPage = 1;
-    loadAllCards( currentPage );
-    nextButton.style.display="block"; //ensure next button is displaying
+    loadAllCards(currentPage);
+    nextButton.style.display = "block"; //ensure next button is displaying
 });
 
 //On click of 'My Deck' link take user to list of favourites or display the 'No cards yet' message
-myDeck.addEventListener('click', ev=>{
+myDeck.addEventListener('click', ev => {
 
     clearPreviousSearches();
 
@@ -276,7 +276,7 @@ myDeck.addEventListener('click', ev=>{
 
     myDeckList.appendChild(newH2Tag);
 
-    if( favouritesArray.length === 0 ){
+    if (favouritesArray.length === 0) {
         newDivTag = document.createElement('div');
         newDivTag.innerHTML = `
 
@@ -288,24 +288,24 @@ myDeck.addEventListener('click', ev=>{
 
     } else {
 
-    //for each to loop through array and display certain properties
+        //for each to loop through array and display certain properties
 
-    favouritesArray.forEach( card =>{
+        favouritesArray.forEach(card => {
 
-        const newImageTag = document.createElement('img');
-        newImageTag.src= `${card.imageUrl}`;
-        newImageTag.alt = `${card.name}`;
-        newImageTag.classList.add('cardTile');
-        newImageTag.dataset.id = card.id;
+            const newImageTag = document.createElement('img');
+            newImageTag.src = `${card.imageUrl}`;
+            newImageTag.alt = `${card.name}`;
+            newImageTag.classList.add('cardTile');
+            newImageTag.dataset.id = card.id;
 
-        myDeckList.appendChild(newImageTag);
+            myDeckList.appendChild(newImageTag);
 
-    })
-}
+        })
+    }
 
 });
 
-myDeckList.addEventListener('click', ev =>{
+myDeckList.addEventListener('click', ev => {
     // console.log(ev.target.dataset.id);
     cardDetails(ev.target.dataset.id);
 })
